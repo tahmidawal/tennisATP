@@ -92,6 +92,47 @@ app.get('/aceCount', (req, res) => {
 });
 
 
+// Endpoint to get player information
+app.get('/playerInfo', (req, res) => {
+    const playerName = req.query.playerName;
+    const query = 'SELECT * FROM Player WHERE player_name = ?';
+    connection.query(query, [playerName], (error, results) => {
+        if (error) {
+            res.status(500).json({error: 'Server error'});
+            return;
+        }
+        //console.log(results)
+        res.json(results);
+
+    });
+});
+
+app.get('/tournamentInfo', (req, res) => {
+    // Make sure you have a date parameter in the query string
+    const dateParam = req.query.tournamentYear;
+
+    // Validate that dateParam is a number and within a reasonable range for years
+    if (!dateParam || isNaN(dateParam) || dateParam.length !== 4) {
+        res.status(400).json({ error: 'Invalid year format' });
+        return;
+    }
+    
+    const year = parseInt(dateParam, 10); // Parse the year as an integer
+
+    // SQL query with ORDER BY clause to sort the results
+    const query = `SELECT * FROM Tournament WHERE YEAR(tourney_date) = ? ORDER BY tourney_name, tourney_date, tourney_level`;
+
+    connection.query(query, [year], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Server error' });
+            return;
+        }
+        res.json(results); 
+        console.log(results);
+    });
+});
+
+
 // Root route to serve the index.html file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
