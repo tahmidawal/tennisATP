@@ -25,7 +25,7 @@
     <div class="container mt-5">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="aceCount-tab" data-toggle="tab" href="#aceCount" role="tab" aria-controls="aceCount" aria-selected="true">Ace Count</a>
+                <a class="nav-link active" id="aceCount-tab" data-toggle="tab" href="#aceCount" role="tab" aria-controls="aceCount" aria-selected="true">Show Statistics</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="playerInfo-tab" data-toggle="tab" href="#playerInfo" role="tab" aria-controls="playerInfo" aria-selected="false">Player Info</a>
@@ -237,6 +237,25 @@
                 tournamentsDiv.innerHTML = tableHTML; // Now correctly targeting the intended div
             })
             .catch(error => console.error('Error:', error));
+        });
+        
+        // Add event listeners for the tabs to show/hide divs
+        document.getElementById('aceCount-tab').addEventListener('click', function() {
+            document.getElementById('statisticsResult').style.display = 'block';
+            document.getElementById('Tournaments').style.display = 'none';
+            document.getElementById('resultsDiv').style.display = 'none';
+        });
+
+        document.getElementById('playerInfo-tab').addEventListener('click', function() {
+            document.getElementById('statisticsResult').style.display = 'none';
+            document.getElementById('Tournaments').style.display = 'none';
+            document.getElementById('resultsDiv').style.display = 'block';
+        });
+
+        document.getElementById('tournamentInfo-tab').addEventListener('click', function() {
+            document.getElementById('statisticsResult').style.display = 'none';
+            document.getElementById('Tournaments').style.display = 'block';
+            document.getElementById('resultsDiv').style.display = 'none';
         });
 
         
