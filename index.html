@@ -95,43 +95,42 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <div id="statisticsResult"></div>
-    <div id="resultsDiv"></div>
     <div id="Tournaments"></div>
+    <div id="resultsDiv"></div>
     <script>
 
 
         function sortTable(columnIndex) {
-          // First, get the table
-          var table = document.getElementById("myTable");
-          // Next, get the tbody of the table
-          var tbody = table.getElementsByTagName("tbody")[0];
-          // Now, get the rows within the tbody
-          var rows = tbody.getElementsByTagName("tr");
-        
-          // Convert HTMLCollection to an array for sorting
-          var rowsArray = Array.from(rows);
-        
-          // Sort rows array
-          rowsArray.sort(function(rowA, rowB) {
-            var cellA = rowA.cells[columnIndex].textContent.trim();
-            var cellB = rowB.cells[columnIndex].textContent.trim();
+            console.log("Here")
+            const table = document.getElementById('Tournaments');
             
-            // Here you might need to handle different data types (numbers, strings, dates)
-            // This example assumes you're sorting strings
-            return cellA.localeCompare(cellB);
-          });
+            // Get all the rows except the first one which is the header
+            let rows = Array.from(table.querySelectorAll('tr:nth-child(n+2)'));
+            console.log(table)
+            // Define a sorting function that compares the text content of the given column
+            let sortedRows = rows.sort((rowA, rowB) => {
+                let cellA = rowA.cells[columnIndex].textContent.trim();
+                let cellB = rowB.cells[columnIndex].textContent.trim();
         
-          // Reorder rows in tbody
-          rowsArray.forEach(function(row) {
-            tbody.appendChild(row); // append moves the element in the DOM
-          });
+                // Check if the comparison is for numbers or strings
+                let cellValueA = isNaN(cellA) ? cellA.toLowerCase() : parseFloat(cellA);
+                let cellValueB = isNaN(cellB) ? cellB.toLowerCase() : parseFloat(cellB);
+        
+                // Compare numbers or strings appropriately
+                if (cellValueA < cellValueB) {
+                    return -1;
+                }
+                if (cellValueA > cellValueB) {
+                    return 1;
+                }
+                return 0;
+            });
+        
+            // Append each sorted row back into the table
+            sortedRows.forEach(row => table.appendChild(row));
         }
+        
 
-        // Your existing JavaScript to populate the Tournament Info table
-        document.getElementById('tournamentInfoForm').addEventListener('submit', function(event) {
-            // Your fetch and table population logic...
-            // Make sure the table is populated within the <tbody> tag
-        });
 
         document.getElementById('aceCountForm').addEventListener('submit', function(event) {
           event.preventDefault();
@@ -168,7 +167,7 @@
               // Inside your fetch request response handling
               .then(data => {
                 const resultsDiv = document.getElementById('resultsDiv'); // Corrected ID reference
-                console.log(resultsDiv); 
+                console.log(data); 
                 let tableHTML = "<table border='1|1'>";
                 // Add table header
                 tableHTML += "<tr>";
@@ -176,7 +175,6 @@
                 tableHTML += "<th>Name</th>";
                 tableHTML += "<th>Hand</th>";
                 tableHTML += "<th>Height</th>";
-                tableHTML += "<th>Country</th>";
                 tableHTML += "<th>Age</th>";
                 tableHTML += "<th>Rank</th>";
                 tableHTML += "<th>Rank Points</th>";
@@ -184,13 +182,15 @@
             
                 // Add rows for each player
                 // Inside your for loop for creating table rows
-                for (let tournament of data) {
+                for (let player of data) {
                     tableHTML += "<tr>";
-                    tableHTML += `<td>${tournament.tourney_id}</td>`;
-                    tableHTML += `<td>${tournament.tourney_name}</td>`;
-                    tableHTML += `<td>${tournament.surface}</td>`;
-                    tableHTML += `<td>${new Date(tournament.tourney_date).toLocaleDateString()}</td>`;
-                    tableHTML += `<td>${tournament.tourney_level}</td>`;
+                    tableHTML += `<td>${player.player_id}</td>`;
+                    tableHTML += `<td>${player.player_name}</td>`;
+                    tableHTML += `<td>${player.hand}</td>`;
+                    tableHTML += `<td>${player.height}</td>`;
+                    tableHTML += `<td>${player.age}</td>`;
+                    tableHTML += `<td>${player.player_rank}</td>`;
+                    tableHTML += `<td>${player.rank_points}</td>`;
                     tableHTML += "</tr>";
                 }
                 
@@ -215,10 +215,10 @@
                 // Add table header
                 tableHTML += "<tr>";
                 tableHTML += "<th onclick='sortTable(0)'>Tournament ID</th>";
-                tableHTML += "<th onclick='sortTable(1)>Tournament Name</th>";
-                tableHTML += "<th onclick='sortTable(2)>Surface</th>";
-                tableHTML += "<th onclick='sortTable(3)>Date</th>";
-                tableHTML += "<th onclick='sortTable(4)>Level</th>";
+                tableHTML += "<th onclick='sortTable(1)'>Tournament Name</th>";
+                tableHTML += "<th onclick='sortTable(2)'>Surface</th>";
+                tableHTML += "<th onclick='sortTable(3)'>Date</th>";
+                tableHTML += "<th onclick='sortTable(4)'>Level</th>";
                 tableHTML += "</tr>";
             
                 // Add rows for each tournament
