@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tennis Statistics</title>
+</head>
+<body>
+    <h1>Show Aggregate Statistics</h1>
+    <form id="aceCountForm">
+        <label for="playerName">Player Name:</label>
+        <input type="text" id="playerName" name="playerName" required>
+
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required>
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" required>
+
+        <button type="submit">Get Ace Count</button>
+    </form>
+
+    <div id="statisticsResult"></div>
+
+    <script>
+        document.getElementById('aceCountForm').addEventListener('submit', function(event) {
+          event.preventDefault();
+          
+          const playerName = document.getElementById('playerName').value;
+          const startDate = document.getElementById('startDate').value;
+          const endDate = document.getElementById('endDate').value;
+          
+          fetch(`/aceCount?playerName=${encodeURIComponent(playerName)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`)
+            .then(response => response.json())
+            .then(data => {
+              const statisticsDiv = document.getElementById('statisticsResult');
+              // Correctly access the player data within the nested array
+              const playerData = data.aceCount[0][0];
+              statisticsDiv.innerHTML = `
+                <h2>Statistics for ${playerData.player_name}</h2>
+                <p>Total Aces: ${playerData.total_aces}</p>
+                <p>Average Aces per Match: ${playerData.avg_aces_per_match}</p>
+                <p>Total Double Faults: ${playerData.total_double_faults}</p>
+                <p>Total Break Points Saved: ${playerData.total_bp_saved}</p>
+              `;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        });
+
+    </script>
+</body>
+</html>
