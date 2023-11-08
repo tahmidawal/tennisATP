@@ -103,9 +103,10 @@
         function sortTable(columnIndex) {
             console.log("Here")
             const table = document.getElementById('Tournaments');
-            
+            const tbody = table.querySelector('tbody');            
             // Get all the rows except the first one which is the header
-            let rows = Array.from(table.querySelectorAll('tr:nth-child(n+2)'));
+            let rows = Array.from(tbody.querySelectorAll('tr'));
+
             console.log(table)
             // Define a sorting function that compares the text content of the given column
             let sortedRows = rows.sort((rowA, rowB) => {
@@ -127,7 +128,8 @@
             });
         
             // Append each sorted row back into the table
-            sortedRows.forEach(row => table.appendChild(row));
+            sortedRows.forEach(row => tbody.appendChild(row));
+
         }
         
 
@@ -208,34 +210,38 @@
             fetch(`/tournamentInfo?tournamentYear=${encodeURIComponent(tournamentYear)}`) // Adjusted to use the correct endpoint
               .then(response => response.json())
               // Inside your fetch request response handling
+              // Inside your fetch request response handling
               .then(data => {
-                const tournamentsDiv = document.getElementById('Tournaments'); // Corrected ID reference
-                console.log(tournamentsDiv); 
-                let tableHTML = "<table border='1'>";
-                // Add table header
-                tableHTML += "<tr>";
-                tableHTML += "<th onclick='sortTable(0)'>Tournament ID</th>";
-                tableHTML += "<th onclick='sortTable(1)'>Tournament Name</th>";
-                tableHTML += "<th onclick='sortTable(2)'>Surface</th>";
-                tableHTML += "<th onclick='sortTable(3)'>Date</th>";
-                tableHTML += "<th onclick='sortTable(4)'>Level</th>";
-                tableHTML += "</tr>";
-            
-                // Add rows for each tournament
-                // Add rows for each tournament
-                for (let tournament of data) {
-                    tableHTML += "<tr id='myTable'>";
-                    tableHTML += `<td onclick="sortTable(0)">${tournament.tourney_id}</td>`;
-                    tableHTML += `<td onclick="sortTable(1)">${tournament.tourney_name}</td>`;
-                    tableHTML += `<td onclick="sortTable(2)">${tournament.surface}</td>`;
-                    tableHTML += `<td onclick="sortTable(3)">${new Date(tournament.tourney_date).toLocaleDateString()}</td>`;
-                    tableHTML += `<td onclick="sortTable(4)">${tournament.tourney_level}</td>`;
-                    tableHTML += "</tr>";
-                }
-                tableHTML += "</table>";
-            
-                tournamentsDiv.innerHTML = tableHTML; // Now correctly targeting the intended div
-            })
+                  const tournamentsDiv = document.getElementById('Tournaments'); // Corrected ID reference
+                  console.log(tournamentsDiv); 
+                  let tableHTML = "<table border='1'>";
+                  // Add table header
+                  tableHTML += "<thead>";
+                  tableHTML += "<tr>";
+                  tableHTML += "<th onclick='sortTable(0)'>Tournament ID</th>";
+                  tableHTML += "<th onclick='sortTable(1)'>Tournament Name</th>";
+                  tableHTML += "<th onclick='sortTable(2)'>Surface</th>";
+                  tableHTML += "<th onclick='sortTable(3)'>Date</th>";
+                  tableHTML += "<th onclick='sortTable(4)'>Level</th>";
+                  tableHTML += "</tr>";
+                  tableHTML += "</thead>";
+                  tableHTML += "<tbody>"; // Open tbody tag
+                
+                  // Add rows for each tournament
+                  for (let tournament of data) {
+                      tableHTML += "<tr>";
+                      tableHTML += `<td>${tournament.tourney_id}</td>`;
+                      tableHTML += `<td>${tournament.tourney_name}</td>`;
+                      tableHTML += `<td>${tournament.surface}</td>`;
+                      tableHTML += `<td>${new Date(tournament.tourney_date).toLocaleDateString()}</td>`;
+                      tableHTML += `<td>${tournament.tourney_level}</td>`;
+                      tableHTML += "</tr>";
+                  }
+                  tableHTML += "</tbody></table>"; // Close tbody tag
+                
+                  tournamentsDiv.innerHTML = tableHTML; // Now correctly targeting the intended div
+              })
+
             .catch(error => console.error('Error:', error));
         });
         
